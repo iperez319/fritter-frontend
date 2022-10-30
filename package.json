@@ -10,6 +10,9 @@
         "dev": "nodemon api/index.ts -e js,ts,json"
     },
     "dependencies": {
+        "@tiptap/core": "^2.0.0-beta.199",
+        "@tiptap/starter-kit": "^2.0.0-beta.199",
+        "@tiptap/vue-2": "^2.0.0-beta.199",
         "connect-history-api-fallback": "^1.6.0",
         "connect-mongo": "^4.6.0",
         "cookie-parser": "~1.4.3",
@@ -54,7 +57,9 @@
                 "files": [
                     "**/*.ts"
                 ],
-                "excludedFiles": ["client/**"],
+                "excludedFiles": [
+                    "client/**"
+                ],
                 "extends": [
                     "xo",
                     "xo-typescript/space",

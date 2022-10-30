@@ -1,54 +1,61 @@
-import type {Types} from 'mongoose';
+import type {Types, PopulatedDoc, Document} from 'mongoose';
 import {Schema, model} from 'mongoose';
-import type {Version} from '../version/model';
 import type {User} from '../user/model';
+import type {Freet} from '../freet/model';
+import type {Version} from '../version/model';
 
 /**
- * This file defines the properties stored in a Freet
+ * This file defines the properties stored in a Follower
  * DO NOT implement operations here ---> use collection file
  */
 
 // Type definition for Freet on the backend
-export type Freet = {
+export type Comment = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   author: Types.ObjectId;
+  parent: Types.ObjectId;
   dateCreated: Date;
   dateModified: Date;
   currentVersion: Types.ObjectId;
   previousVersions: Types.ObjectId[];
-  visible: boolean;
+  parentType: 'Comment' | 'Freet';
 };
 
-export type PopulatedFreet = {
+export type PopulatedComment = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
-  author: User;
+  author: Types.ObjectId;
+  parent: Types.ObjectId;
   dateCreated: Date;
   dateModified: Date;
   currentVersion: Version;
   previousVersions: Types.ObjectId[];
-  visible: boolean;
+  parentType: 'Comment' | 'Freet';
 };
 
-// Mongoose schema definition for interfacing with a MongoDB table
-// Freets stored in this table will have these fields, with the
-// type given by the type property, inside MongoDB
-const FreetSchema = new Schema<Freet>({
-  // The author userId
+const CommentSchema = new Schema<Comment>({
   author: {
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
   },
-  // The date the freet was created
+  parent: {
+    // Use Types.ObjectId outside of the schema
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref_path: 'parentType'
+  },
+  parentType: {
+    type: String,
+    enum: ['Comment', 'Freet']
+  },
   dateCreated: {
     type: Date,
-    required: true
+    default: Date.now
   },
-  // The date the freet was modified
   dateModified: {
     type: Date,
-    required: true
+    default: Date.now
   },
   currentVersion: {
     type: Schema.Types.ObjectId,
@@ -60,5 +67,5 @@ const FreetSchema = new Schema<Freet>({
   }
 });
 
-const FreetModel = model<Freet>('Freet', FreetSchema);
-export default FreetModel;
+const CommentModel = model<Comment>('Comment', CommentSchema);
+export default CommentModel;

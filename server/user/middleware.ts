@@ -144,6 +144,22 @@ const isAuthorExists = async (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+const doUsersExist = (fields: string[], reqType: 'body' | 'query' | 'params') => async (req: Request, res: Response, next: NextFunction) => {
+  const args = req[reqType];
+  for (const field of fields) {
+    const currentField: string = args[field];
+    const user = await UserCollection.findOneByUserId(currentField);
+    if (user === null) {
+      res.status(404).json({
+        error: `User with id ${currentField} does not exist`
+      });
+      return;
+    }
+  }
+
+  next();
+};
+
 export {
   isCurrentSessionUserExists,
   isUserLoggedIn,
@@ -152,5 +168,6 @@ export {
   isAccountExists,
   isAuthorExists,
   isValidUsername,
-  isValidPassword
+  isValidPassword,
+  doUsersExist
 };

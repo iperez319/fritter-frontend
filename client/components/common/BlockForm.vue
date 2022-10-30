@@ -12,12 +12,16 @@
         :key="field.id"
       >
         <label :for="field.id">{{ field.label }}:</label>
-        <textarea
+        <!-- <textarea
           v-if="field.id === 'content'"
           :name="field.id"
           :value="field.value"
           @input="field.value = $event.target.value"
-        />
+        /> -->
+        <TextEditor 
+          v-if="field.id === 'content'"
+          v-model="field.value"
+          ></TextEditor>
         <input
           v-else
           :type="field.id === 'password' ? 'password' : 'text'"
@@ -48,9 +52,13 @@
 </template>
 
 <script>
+import TextEditor from './TextEditor';
 
 export default {
   name: 'BlockForm',
+  components: {
+    TextEditor
+  },
   data() {
     /**
      * Options for submitting this form.

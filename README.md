@@ -148,3 +148,7 @@ Here is a list of documentation you may want to consult while working with Vue:
 * [Vuex for Vue 2](https://v3.vuex.vuejs.org)
 * [Vue Template Explorer for Vue 2](https://v2.template-explorer.vuejs.org)
 * [MDN's in-depth Vue tutorials](https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks#vue_tutorials)
+
+### Citations
+
+- TipTap - Used for the text formatting feature

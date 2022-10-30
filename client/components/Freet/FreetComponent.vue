@@ -36,18 +36,17 @@
         </button>
       </div>
     </header>
-    <textarea
+    <TextEditor
       v-if="editing"
-      class="content"
-      :value="draft"
-      @input="draft = $event.target.value"
+      v-model="draft"
     />
-    <p
+    <div
       v-else
       class="content"
+      v-html="freet.content"
     >
-      {{ freet.content }}
-    </p>
+      <!-- {{ freet.content }} -->
+  </div>
     <p class="info">
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
@@ -65,8 +64,12 @@
 </template>
 
 <script>
+import TextEditor from '../common/TextEditor';
 export default {
   name: 'FreetComponent',
+  components: {
+    TextEditor
+  },
   props: {
     // Data from the stored freet
     freet: {
