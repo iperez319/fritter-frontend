@@ -42,6 +42,7 @@
       </header>
       <section
         v-if="$store.state.freets.length"
+        class="freet-list"
       >
         <FreetComponent
           v-for="freet in $store.state.freets"
@@ -92,5 +93,9 @@ section .scrollbox {
   flex: 1 0 50vh;
   padding: 3%;
   overflow-y: scroll;
+}
+
+.freet-list {
+  gap: 10px;
 }
 </style>

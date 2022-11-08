@@ -18,6 +18,7 @@
   <script>
   import { Editor, EditorContent } from '../../../node_modules/@tiptap/vue-2'
   import StarterKit from '../../../node_modules/@tiptap/starter-kit'
+  import CharacterCount from '../../../node_modules/@tiptap/extension-character-count'
 
   
   export default {

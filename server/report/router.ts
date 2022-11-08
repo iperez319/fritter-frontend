@@ -63,12 +63,12 @@ router.post(
     reportValidator.didReportPreviously
   ],
   async (req: Request, res: Response) => {
-    const {parentId, parentType} = req.body;
+    const {parent, parentType} = req.body;
     const {userId: reporteeId} = req.session;
 
-    const report = await ReportCollection.addOne(reporteeId, parentId, parentType);
+    const report = await ReportCollection.addOne(reporteeId, parent, parentType);
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'Your report was posted successfully.',
       report: util.constructReportResponse(report)
     });

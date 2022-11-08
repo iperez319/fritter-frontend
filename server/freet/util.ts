@@ -11,6 +11,7 @@ type FreetResponse = {
   dateModified: string;
   content: string;
   previousVersions: string[];
+  visible: boolean;
 };
 
 /**

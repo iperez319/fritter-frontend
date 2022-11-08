@@ -30,10 +30,11 @@ const VersionSchema = new Schema<Version>({
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
-    ref_path: 'parentType'
+    refPath: 'parentType'
   },
   parentType: {
     type: String,
+    required: true,
     enum: ['Comment', 'Freet']
   },
   content: {

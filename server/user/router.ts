@@ -28,6 +28,17 @@ router.get(
   }
 );
 
+router.get('/:userId', [userValidator.isUserLoggedIn], async (req: Request, res: Response) => {
+  const user = await UserCollection.findOneByUserId(req.params.userId)
+  if(user) {
+    res.status(200).json({
+      username: user.username
+    })
+  } else {
+    res.status(404).json({message: 'User not found'})
+  }
+})
+
 /**
  * Sign in user.
  *

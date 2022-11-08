@@ -29,7 +29,7 @@ class VersionCollection {
    * @return {Promise<HydratedDocument<Version>[]>} - The newly created Commenet
    */
   static async findByParentId(parentId: Types.ObjectId | string): Promise<Array<HydratedDocument<PopulatedVersion>>> {
-    const version = await VersionModel.find({parent: parentId});
+    const version = await VersionModel.find({parent: parentId}).populate('parent').sort({'dateCreated':-1});
     return version;
   }
 

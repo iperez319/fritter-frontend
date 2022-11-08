@@ -57,6 +57,10 @@ const FreetSchema = new Schema<Freet>({
   previousVersions: {
     type: [Schema.Types.ObjectId],
     ref: 'Version'
+  },
+  visible: {
+    type: Boolean,
+    default: true,
   }
 });
 

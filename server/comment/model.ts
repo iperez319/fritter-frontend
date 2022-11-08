@@ -43,7 +43,7 @@ const CommentSchema = new Schema<Comment>({
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
-    ref_path: 'parentType'
+    refPath: 'parentType'
   },
   parentType: {
     type: String,

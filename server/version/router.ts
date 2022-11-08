@@ -7,6 +7,7 @@ import * as versionValidator from './middleware';
 import * as util from './util';
 import type {Version} from './model';
 import type {HydratedDocument} from 'mongoose';
+import VersionModel from './model';
 
 const router = express.Router();
 
@@ -20,9 +21,9 @@ const router = express.Router();
 
 router.get(
   '/', [versionValidator.doesParentExist], async (req: Request, res: Response) => {
-    const {parentId} = req.query;
+    const {parentId, parentType} = req.query;
     const versions = await VersionCollection.findByParentId(parentId as string);
-    const response = versions.map(version => util.constructVersionResponse(version as HydratedDocument<Version>));
+    const response = versions//versions.map(version => util.constructVersionResponse(version as HydratedDocument<Version>));
     res.status(200).json(response);
   }
 );

@@ -94,9 +94,7 @@ class FreetCollection {
    */
      static async archiveOne(freetId: Types.ObjectId | string): Promise<HydratedDocument<Freet>> {
       const freet = await FreetModel.findOne({_id: freetId});
-  
       freet.visible = !freet.visible;
-  
       await freet.save();
       return (await freet.populate('author')).populate('currentVersion');
     }

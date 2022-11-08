@@ -35,7 +35,9 @@ router.get(
     }
 
     const allFreets = await FreetCollection.findAll();
-    const response = allFreets.map(util.constructFreetResponse);
+    let response = allFreets.map(util.constructFreetResponse);
+    response = response.filter(freet => freet.visible || (!freet.visible && freet.author !== req.session.userId))
+
     res.status(200).json(response);
   },
   [
@@ -43,7 +45,8 @@ router.get(
   ],
   async (req: Request, res: Response) => {
     const authorFreets = await FreetCollection.findAllByUsername(req.query.author as string);
-    const response = authorFreets.map(util.constructFreetResponse);
+    let response = authorFreets.map(util.constructFreetResponse);
+    response = response.filter(freet => freet.visible || (!freet.visible && freet.author !== req.session.userId))
     res.status(200).json(response);
   }
 );
