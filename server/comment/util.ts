@@ -28,22 +28,27 @@ const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:
  * Transform a raw Freet object from the database into an object
  * with all the information needed by the frontend
  *
- * @param {HydratedDocument<Comment>} comment - A freet
+ * @param {HydratedDocument<PopulatedComment>} comment - A freet
  * @returns {CommentResponse} - The freet object formatted for the frontend
  */
-const constructCommentResponse = (comment: HydratedDocument<Comment>): CommentResponse => {
+const constructCommentResponse = (comment: HydratedDocument<PopulatedComment>): CommentResponse => {
   const commentCopy: PopulatedComment = {
     ...comment.toObject({
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
+
+  const {username} = commentCopy.author;
+  delete commentCopy.author;
+
   return {
     ...commentCopy,
     _id: commentCopy._id.toString(),
-    author: commentCopy.author.toString(),
+    author: username,
     dateCreated: formatDate(comment.dateCreated),
     dateModified: formatDate(comment.dateModified),
     parent: commentCopy.parent.toString(),
+    content: commentCopy.currentVersion.content,
   };
 };
 

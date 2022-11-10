@@ -17,6 +17,21 @@ const isFreetExists = async (req: Request, res: Response, next: NextFunction) =>
 
   next();
 };
+/**
+ * Checks if user has permission to see freet i.e. only author is able to see their own archived freet
+ */
+const userHasPermission = async (req: Request, res: Response, next: NextFunction) => {
+  let {userId} = req.session;
+  const freet = await FreetCollection.findOne(req.params.freetId);
+
+  if(!freet.visible && (userId !== freet.author)){
+    res.status(403).json({
+      message: 'You do not have permission to see this freet'
+    })
+    return;
+  }
+  next();
+}
 
 /**
  * Checks if the content of the freet in req.body is valid, i.e not a stream of empty
@@ -60,5 +75,6 @@ const isValidFreetModifier = async (req: Request, res: Response, next: NextFunct
 export {
   isValidFreetContent,
   isFreetExists,
-  isValidFreetModifier
+  isValidFreetModifier,
+  userHasPermission
 };

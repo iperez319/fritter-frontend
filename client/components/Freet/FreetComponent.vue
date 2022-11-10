@@ -183,12 +183,12 @@
         />
         <span v-else v-html="freet.content" />
       </b-card-text>
-      <template #footer v-if="!hideActions">
-        <b-button variant="link" class="text-decoration-none"
+      <template #footer v-if="!hideActions && !hideFooter">
+        <!-- <b-button variant="link" class="text-decoration-none"
         @click="handleLike"
         >
           <b-icon-heart-fill/> Like
-        </b-button>
+        </b-button> -->
         <b-button variant="link" class="text-decoration-none">
           <b-icon-chat-fill/> Comment
         </b-button>
@@ -214,6 +214,10 @@ export default {
       default: true,
     },
     hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hideFooter: {
       type: Boolean,
       default: false,
     }

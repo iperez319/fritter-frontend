@@ -23,7 +23,25 @@ router.get(
   async (req: Request, res: Response) => {
     const {parentId} = req.query;
     const comments = await CommentCollection.findByParentId(parentId as string);
-    const response = comments;
+    let response = comments.map(util.constructCommentResponse);
+    res.status(200).json(response);
+  }
+);
+
+/**
+ * Get specific comment
+ *
+ * @name GET /api/comments/:commentId
+ *
+ * @return {CommentResponse[]} - A list of all the comments for a given parent
+ */
+
+ router.get(
+  '/:commentId',
+  async (req: Request, res: Response) => {
+    const {commentId} = req.params;
+    const comment = await CommentCollection.findById(commentId as string);
+    let response = util.constructCommentResponse(comment);
     res.status(200).json(response);
   }
 );

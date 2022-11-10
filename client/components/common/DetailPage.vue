@@ -1,7 +1,8 @@
 <template>
-    <!-- <main v-if="freet">
+    <main v-if="post">
         <section>
-            <FreetComponent :freet="freet" hideFooter/>
+            <FreetComponent v-if="type == 'Freet'" :freet="post" hideFooter/>
+            <CommentComponent v-if="type == 'Comment'" :comment="post" hideFooter />
         </section>
         <section>
             <h2>Comments</h2>
@@ -13,8 +14,7 @@
                 <CommentComponent v-for="comment in comments" :comment="comment" />
             </section>
         </section>
-    </main> -->
-    <DetailPage type="Freet" :postId="this.$route.params.freetId"/>
+    </main>
 </template>
 
 <script>
@@ -22,30 +22,39 @@
 import CommentComponent from '@/components/Comment/CommentComponent.vue';
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import TextEditor from '@/components/common/TextEditor.vue';
-import DetailPage from '@/components/common/DetailPage.vue';
 
 export default {
-    name: 'FreetDetailPage',
-    components: {CommentComponent, FreetComponent, TextEditor, DetailPage},
+    name: 'DetailPage',
+    components: {CommentComponent, FreetComponent, TextEditor},
     data() {
         return {
-            freet: null,
+            post: null,
             comments: [],
             newCommentContent: "",
+        }
+    },
+    props: {
+        type: {
+            type: String, 
+            required: true
+        },
+        postId: {
+            type: String,
+            required: true
         }
     },
     methods: {
         async postComment() {
             let post_comment = `/api/comments`
-            let r = await fetch(post_comment, {method: 'POST', body: JSON.stringify({parentId: this.$route.params.freetId, parentType: 'Freet', content: this.newCommentContent}), headers: {'Content-Type': 'application/json'}});
+            let r = await fetch(post_comment, {method: 'POST', body: JSON.stringify({parentId: this.postId, parentType: this.type, content: this.newCommentContent}), headers: {'Content-Type': 'application/json'}});
             let response = await r.json()
         }
     },
     async mounted() {
-        let freet_url = `/api/freets/${this.$route.params.freetId}`
-        let r = await fetch(freet_url)
+        let post_url = `/api/${this.type == 'Freet' ? 'freets' : 'comments'}/${this.postId}`
+        let r = await fetch(post_url)
         let response = await r.json()
-        this.freet = response
+        this.post = response
 
         let comment_url = `/api/comments?parentId=${this.$route.params.freetId}`
         r = await fetch(comment_url)

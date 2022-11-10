@@ -15,7 +15,7 @@ class CommentCollection {
    * @param {string} content - content of the comment
    * @return {Promise<HydratedDocument<Comment>>} - The newly created Follower
    */
-  static async addOne(authorId: Types.ObjectId | string, parentId: Types.ObjectId | string, parentType: 'Comment' | 'Freet', content: string): Promise<HydratedDocument<Comment>> {
+  static async addOne(authorId: Types.ObjectId | string, parentId: Types.ObjectId | string, parentType: 'Comment' | 'Freet', content: string): Promise<HydratedDocument<PopulatedComment>> {
     const comment = new CommentModel({
       author: authorId,
       parent: parentId,
@@ -27,7 +27,7 @@ class CommentCollection {
 
     comment.currentVersion = newVersion._id;
     await comment.save();
-    return comment.populate('currentVersion');
+    return comment.populate(['currentVersion', 'author']);
   }
 
   /**
@@ -37,7 +37,7 @@ class CommentCollection {
    * @return {Promise<HydratedDocument<Comment>[]>} - The newly created Commenet
    */
   static async findByParentId(parentId: Types.ObjectId | string): Promise<Array<HydratedDocument<PopulatedComment>>> {
-    const comments = await CommentModel.find({parent: parentId}).populate('currentVersion');
+    const comments = await CommentModel.find({parent: parentId}).populate(['currentVersion', 'author']);
     return comments;
   }
 
@@ -48,7 +48,7 @@ class CommentCollection {
    * @return {Promise<HydratedDocument<Comment>[]>} - The newly created Commenet
    */
   static async findById(commentId: Types.ObjectId | string): Promise<HydratedDocument<PopulatedComment>> {
-    const comment = await CommentModel.findById(commentId).populate('currentVersion');
+    const comment = await CommentModel.findById(commentId).populate(['currentVersion', 'author']);
     return comment;
   }
 
@@ -59,7 +59,7 @@ class CommentCollection {
    * @param {string} content - The new content of the comment
    * @return {Promise<HydratedDocument<Comment>>} - The newly updated comment
    */
-  static async updateOne(commentId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Comment>> {
+  static async updateOne(commentId: Types.ObjectId | string, content: string): Promise<HydratedDocument<PopulatedComment>> {
     const comment = await CommentModel.findOne({_id: commentId});
     const newVersion = await VersionCollection.addOne(commentId, 'Comment', content);
 
@@ -68,7 +68,7 @@ class CommentCollection {
     comment.currentVersion = newVersion._id;
 
     await comment.save();
-    return comment.populate('currentVersion');
+    return comment.populate(['currentVersion', 'author']);
   }
 
   /**

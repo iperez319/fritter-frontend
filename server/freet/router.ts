@@ -52,6 +52,26 @@ router.get(
 );
 
 /**
+* Get specific freet
+*
+* @name GET /api/freets/:freetId
+*
+* @return {FreetResponse} - An array of freets created by user with username, author
+* @throws {404} - If freet was not found
+* @throws {403} - If user does not have access to freet or is not logged in
+*
+*/
+router.get(
+ '/:freetId',
+ [userValidator.isUserLoggedIn, freetValidator.isFreetExists, freetValidator.userHasPermission],
+ async (req: Request, res: Response) => {
+   const {freetId} = req.params;
+   const freet = await FreetCollection.findOne(freetId);
+   let response = util.constructFreetResponse(freet);
+   res.status(200).json(response);
+ });
+
+/**
  * Create a new freet.
  *
  * @name POST /api/freets
