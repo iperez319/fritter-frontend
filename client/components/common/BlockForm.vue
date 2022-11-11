@@ -22,13 +22,13 @@
             v-if="field.id === 'content'"
             v-model="field.value"
             ></TextEditor>
-          <input
+          <b-form-input
             v-else
             :type="field.id === 'password' ? 'password' : 'text'"
             :name="field.id"
             :value="field.value"
             @input="field.value = $event.target.value"
-          >
+          />
         </div>
       </article>
       <article v-else>

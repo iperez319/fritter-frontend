@@ -10,7 +10,7 @@
             <h5 class="mb-0">
               <b-link :to="'/profile/' + freet.author.username" style="color:black">@{{freet.author.username}}</b-link>
             </h5>
-            <div>
+            <div style="display:flex;gap:5px">
                 <b-badge
                   :to="'/version/' + freet._id"
                   variant="info"
