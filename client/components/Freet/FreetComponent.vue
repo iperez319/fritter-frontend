@@ -16,16 +16,20 @@
                   variant="info"
                   style="font-size:17px"
                   v-if="freet.previousVersions.length > 0"
+                  :id="'edited-badge' + freet._id"
                   >
                   Edited
                 </b-badge>
+                <b-tooltip :target="'edited-badge' + freet._id" triggers="hover">Click here to see previous versions</b-tooltip>
                 <b-badge
                   variant="warning"
                   style="font-size:17px"
                   v-if="!freet.visible && editable"
+                  :id="'archived-badge' + freet._id"
                   >
                   Archived
                 </b-badge>
+                <b-tooltip :target="'archived-badge' + freet._id" triggers="hover">Nobody else can see this freet</b-tooltip>
               </div>
           </div>
           <b-dropdown dropleft size="lg"  variant="link" toggle-class="text-decoration-none" no-caret v-if="!hideActions">

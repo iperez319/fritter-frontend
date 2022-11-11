@@ -2,7 +2,7 @@
 <!-- This is just an example; feel free to define any reusable components you want! -->
 
 <template>
-    <form @submit.prevent="submit">
+    <b-form @submit.prevent="submit">
       <h3>{{ title }}</h3>
       <article
         v-if="fields.length"
@@ -22,12 +22,12 @@
             v-if="field.id === 'content'"
             v-model="field.value"
             ></TextEditor>
-          <b-form-input
+          <b-input
             v-else
             :type="field.id === 'password' ? 'password' : 'text'"
             :name="field.id"
             :value="field.value"
-            @input="field.value = $event.target.value"
+            @input="field.value = $event"
           />
         </div>
       </article>
@@ -49,7 +49,7 @@
           <p>{{ alert }}</p>
         </article>
       </section>
-    </form>
+    </b-form>
 </template>
 
 <script>
