@@ -152,3 +152,5 @@ Here is a list of documentation you may want to consult while working with Vue:
 ### Citations
 
 - TipTap - Used for the text formatting feature
+- Bootstrap - UI Framework
+- vue-hotkeys-rt - For keyboard shortcut support

@@ -43,7 +43,6 @@
   import StarterKit from '../../../node_modules/@tiptap/starter-kit'
   import CharacterCount from '../../../node_modules/@tiptap/extension-character-count'
 
-  
   export default {
     components: {
       EditorContent,
@@ -65,6 +64,9 @@
         if(evt.target.tagName === 'DIV'){
           this.editor.commands.focus('end');
         }
+      },
+      handleShortKey(evt){
+        if(evt.key === "/") this.editor.commands.focus('end');
       }
     },
     watch: {
@@ -75,6 +77,9 @@
             }
             this.editor.commands.setContent(value, false)
         }
+    },
+    created() {
+      window.addEventListener('keydown', this.handleShortKey);
     },
     mounted() {
       this.editor = new Editor({
@@ -97,6 +102,7 @@
     },
     beforeDestroy() {
       this.editor.destroy()
+      window.removeEventListener('keydown', this.handleShortKey);
     },
   }
   </script>
