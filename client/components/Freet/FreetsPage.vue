@@ -1,9 +1,9 @@
 <!-- Default page that also displays freets -->
 
 <template>
-  <main>
+  <main class="container">
     <section v-if="$store.state.username">
-      <header>
+      <header style="margin-top: 10px; margin-bottom:10px">
         <h2>Welcome @{{ $store.state.username }}</h2>
       </header>
       <CreateFreetForm />
@@ -23,7 +23,7 @@
     </section>
     <section>
       <header>
-        <div class="left">
+        <div class="left" style="margin-top:10px; margin-bottom:10px">
           <h2>
             Viewing all freets
             <span v-if="$store.state.filter">

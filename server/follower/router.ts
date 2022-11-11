@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import FollowerCollection from './collection';
@@ -5,8 +6,45 @@ import * as userValidator from '../user/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as followerValidator from './middleware';
 import * as util from './util';
+import UserCollection from '../user/collection';
 
 const router = express.Router();
+
+/**
+ * Get stats for a particular user
+ *
+ * @name GET /api/followers/stats?username=
+ *
+ * @return {FollowerResponse[]} - A list of all the followers for a given users
+ */
+
+ router.get(
+  '/stats',
+  async (req: Request, res: Response) => {
+    const {username} = req.query;
+    const followers = await FollowerCollection.getFollowStats(username as string);
+    res.status(200).json(followers);
+  }
+);
+
+/**
+ * Checks if current user follows another
+ *
+ * @name GET /api/followers/doesFollow?followee=&follower
+ *
+ * @return {FollowerResponse[]} - A list of all the followers for a given users
+ */
+
+ router.get(
+  '/doesFollow',
+  async (req: Request, res: Response) => {
+    const {followee, follower} = req.query;
+    const follower_id = (await UserCollection.findOneByUsername(follower as string))._id
+    const followee_id = (await UserCollection.findOneByUsername(followee as string))._id
+    const follow = await FollowerCollection.doesFollow(follower_id, followee_id);
+    res.status(200).json({doesFollow: follow});
+  }
+);
 
 /**
  * Get all of the followers of a given user
@@ -44,8 +82,9 @@ router.post(
     followerValidator.doesFollowAlreadyExist
   ],
   async (req: Request, res: Response) => {
-    const {followeeId} = req.params;
+    let {followeeId} = req.params;
     const {userId: followerId} = req.session;
+    followeeId = req.params.mapping[followeeId as string]
     const followerObj = await FollowerCollection.addOne(followerId, followeeId);
 
     res.status(201).json({
@@ -72,8 +111,9 @@ router.delete(
     userValidator.doUsersExist(['followeeId'], 'params')
   ],
   async (req: Request, res: Response) => {
-    const {followeeId} = req.params;
+    let {followeeId} = req.params;
     const {userId: followerId} = req.session;
+    followeeId = req.params.mapping[followeeId as string]
     await FollowerCollection.unfollow(followerId, followeeId);
     res.status(200).json({
       message: 'Your unfollow request was successfull.'

@@ -1,16 +1,16 @@
 <template>
-    <main v-if="post">
-        <section>
+    <main v-if="post" class="container">
+        <section style="margin-top: 10px; margin-bottom: 10px">
             <FreetComponent v-if="type == 'Freet'" :freet="post" hideFooter/>
             <CommentComponent v-if="type == 'Comment'" :comment="post" hideFooter />
         </section>
         <section>
             <h2>Comments</h2>
-            <section>
+            <section class="commentEditor" style="margin-top: 10px; margin-bottom: 10px">
                 <TextEditor v-model="newCommentContent"/>
-                <b-button @click="postComment">Reply</b-button>
+                <b-button @click="postComment" variant="primary" size="lg" style="margin-top: 10px">Reply</b-button>
             </section>
-            <section>
+            <section class="freetList">
                 <CommentComponent v-for="comment in comments" :comment="comment" />
             </section>
         </section>
@@ -48,6 +48,7 @@ export default {
             let post_comment = `/api/comments`
             let r = await fetch(post_comment, {method: 'POST', body: JSON.stringify({parentId: this.postId, parentType: this.type, content: this.newCommentContent}), headers: {'Content-Type': 'application/json'}});
             let response = await r.json()
+            this.$router.go();
         }
     },
     async mounted() {
@@ -56,7 +57,7 @@ export default {
         let response = await r.json()
         this.post = response
 
-        let comment_url = `/api/comments?parentId=${this.$route.params.freetId}`
+        let comment_url = `/api/comments?parentId=${this.postId}`
         r = await fetch(comment_url)
         response = await r.json()
         this.comments = response
@@ -64,3 +65,11 @@ export default {
 }
 
 </script>
+
+<style>
+    .freetList {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+    }
+</style>

@@ -3,16 +3,18 @@
 
 <template>
   <form @submit.prevent="submit">
-    <input
+    <b-form-input
       v-model="value"
       type="text"
       :placeholder="placeholder"
-    >
-    <button
+    />
+    <b-button
+    variant="primary"
       type="submit"
+      style="flex-shrink:0"
     >
       {{ button }}
-    </button>
+    </b-button>
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -48,6 +50,7 @@ export default {
 form {
     display: flex;
     position: relative;
+    gap: 5px;
 }
 
 input {

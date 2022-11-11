@@ -32,6 +32,11 @@ export type PopulatedComment = {
   parentType: 'Comment' | 'Freet';
 };
 
+const opts = {
+  toObject: { virtuals: true, versionKey: false },
+  toJSON: { virtuals: true, versionKey: false }
+};
+
 const CommentSchema = new Schema<Comment>({
   author: {
     // Use Types.ObjectId outside of the schema
@@ -65,7 +70,15 @@ const CommentSchema = new Schema<Comment>({
     type: [Schema.Types.ObjectId],
     ref: 'Version'
   }
-});
+}, opts);
+
+CommentSchema.virtual('numComments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'parent',
+  count: true,
+  match: {parentType: 'Comment'}
+})
 
 const CommentModel = model<Comment>('Comment', CommentSchema);
 export default CommentModel;

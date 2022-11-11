@@ -37,7 +37,7 @@ class CommentCollection {
    * @return {Promise<HydratedDocument<Comment>[]>} - The newly created Commenet
    */
   static async findByParentId(parentId: Types.ObjectId | string): Promise<Array<HydratedDocument<PopulatedComment>>> {
-    const comments = await CommentModel.find({parent: parentId}).populate(['currentVersion', 'author']);
+    const comments = await CommentModel.find({parent: parentId}).populate(['currentVersion', 'author', 'numComments']);
     return comments;
   }
 
@@ -48,7 +48,7 @@ class CommentCollection {
    * @return {Promise<HydratedDocument<Comment>[]>} - The newly created Commenet
    */
   static async findById(commentId: Types.ObjectId | string): Promise<HydratedDocument<PopulatedComment>> {
-    const comment = await CommentModel.findById(commentId).populate(['currentVersion', 'author']);
+    const comment = await CommentModel.findById(commentId).populate(['currentVersion', 'author', 'numComments']);
     return comment;
   }
 
@@ -68,7 +68,7 @@ class CommentCollection {
     comment.currentVersion = newVersion._id;
 
     await comment.save();
-    return comment.populate(['currentVersion', 'author']);
+    return comment.populate(['currentVersion', 'author', 'numComments']);
   }
 
   /**

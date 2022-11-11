@@ -1,4 +1,4 @@
-import type {HydratedDocument, Types} from 'mongoose';
+import {HydratedDocument, Types} from 'mongoose';
 import type {Follower, PopulatedFollower} from './model';
 import FollowerModel from './model';
 import UserCollection from '../user/collection';
@@ -12,6 +12,7 @@ class FollowerCollection {
    * @return {Promise<HydratedDocument<Follower>>} - The newly created Follower
    */
   static async addOne(follower: Types.ObjectId | string, followee: Types.ObjectId | string): Promise<HydratedDocument<Follower>> {
+    console.log("HEEERE")
     const followerObj = new FollowerModel({
       follower,
       followee
@@ -49,8 +50,14 @@ class FollowerCollection {
    * @return {Promise<{following: number, followers: number}>} - The stats of followers and following
    */
   static async getFollowStats(user: Types.ObjectId | string): Promise<{following: number; followers: number}> {
-    const followers = ((await FollowerModel.find({followee: user})) || []).length;
-    const following = ((await FollowerModel.find({follower: user})) || []).length;
+    let userId = user;
+    console.log("HERE")
+    if(!Types.ObjectId.isValid(userId)){
+      userId = (await UserCollection.findOneByUsername(userId as string))._id;
+    }
+    console.log(userId)
+    const followers = ((await FollowerModel.find({followee: userId})) || []).length;
+    const following = ((await FollowerModel.find({follower: userId})) || []).length;
     return {followers, following};
   }
 

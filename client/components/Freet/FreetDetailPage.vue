@@ -1,57 +1,13 @@
 <template>
-    <!-- <main v-if="freet">
-        <section>
-            <FreetComponent :freet="freet" hideFooter/>
-        </section>
-        <section>
-            <h2>Comments</h2>
-            <section>
-                <TextEditor v-model="newCommentContent"/>
-                <b-button @click="postComment">Reply</b-button>
-            </section>
-            <section>
-                <CommentComponent v-for="comment in comments" :comment="comment" />
-            </section>
-        </section>
-    </main> -->
     <DetailPage type="Freet" :postId="this.$route.params.freetId"/>
 </template>
 
 <script>
 
-import CommentComponent from '@/components/Comment/CommentComponent.vue';
-import FreetComponent from '@/components/Freet/FreetComponent.vue';
-import TextEditor from '@/components/common/TextEditor.vue';
 import DetailPage from '@/components/common/DetailPage.vue';
-
 export default {
     name: 'FreetDetailPage',
-    components: {CommentComponent, FreetComponent, TextEditor, DetailPage},
-    data() {
-        return {
-            freet: null,
-            comments: [],
-            newCommentContent: "",
-        }
-    },
-    methods: {
-        async postComment() {
-            let post_comment = `/api/comments`
-            let r = await fetch(post_comment, {method: 'POST', body: JSON.stringify({parentId: this.$route.params.freetId, parentType: 'Freet', content: this.newCommentContent}), headers: {'Content-Type': 'application/json'}});
-            let response = await r.json()
-        }
-    },
-    async mounted() {
-        let freet_url = `/api/freets/${this.$route.params.freetId}`
-        let r = await fetch(freet_url)
-        let response = await r.json()
-        this.freet = response
-
-        let comment_url = `/api/comments?parentId=${this.$route.params.freetId}`
-        r = await fetch(comment_url)
-        response = await r.json()
-        this.comments = response
-    },
+    components: {DetailPage},
 }
 
 </script>

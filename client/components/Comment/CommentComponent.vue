@@ -6,9 +6,9 @@
         <template #header>
           <div class="header">
             <div class="left">
-              <b-avatar :text="comment.author[0]"></b-avatar>
+              <b-avatar :text="comment.author.username[0]"></b-avatar>
               <h5 class="mb-0">
-                @{{comment.author}}
+                <b-link :to="'/profile/' + comment.author.username" style="color:black">@{{comment.author.username}}</b-link>
                 <b-badge 
                   :to="'/version/' + comment._id" 
                   variant="info"
@@ -34,7 +34,7 @@
               </b-dropdown-item>
               <b-dropdown-item 
                 @click="deleteComment"
-                v-if="$store.state.username === comment.author"
+                v-if="$store.state.username === comment.author.username"
               >
                 <template #default>
                   <div class="menuItemWithIcon">
@@ -55,7 +55,7 @@
               </b-dropdown-item> -->
               <b-dropdown-item 
                 @click="reportComment"
-                v-if="$store.state.username !== comment.author"
+                v-if="$store.state.username !== comment.author.username"
               >
                 <template #default>
                   <div class="menuItemWithIcon">
@@ -88,11 +88,16 @@
             v-if="editing"
             v-model="draft"
           />
-          <span v-else v-html="comment.content" />
+          <div v-else>
+            <p class="timestamp">
+                <b-icon-clock/>{{this.postTimestamp}}
+            </p>
+            <p v-html="comment.content"></p>
+          </div>
         </b-card-text>
         <template #footer v-if="!hideActions && !hideFooter">
           <b-button variant="link" class="text-decoration-none">
-            <b-icon-chat-fill/> Comment <!--TODO: Replace label with number of comments-->
+            <b-icon-chat-fill/> {{comment.numComments ?? 0}}
           </b-button>
         </template>
     </b-card>
@@ -100,6 +105,7 @@
   
   <script>
   import TextEditor from '../common/TextEditor';
+  import moment from '../../../node_modules/moment';
   export default {
     name: 'CommentComponent',
     components: {
@@ -130,6 +136,11 @@
         draft: this.comment.content, // Potentially-new content for this freet
         alerts: {} // Displays success/error messages encountered during freet modification
       };
+    },
+    computed: {
+        postTimestamp() {
+            return moment(this.comment.dateModified).fromNow()
+        }
     },
     methods: {
       startEditing() {
@@ -233,6 +244,7 @@
       },
       async handleCommentClick(evt) {
           this.$router.push(`/comments/${this.comment._id}`)
+          this.$router.go();
       },
       async handleLike(evt){
         evt.stopPropagation();
@@ -264,5 +276,14 @@
     align-items:center;
     gap:10px
   }
+
+  .timestamp {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: rgb(109, 109, 109);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
   </style>
   

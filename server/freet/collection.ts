@@ -33,7 +33,7 @@ class FreetCollection {
     freet.currentVersion = newVersion._id;
     await freet.save();
 
-    return (await freet.populate('author')).populate('currentVersion');
+    return await freet.populate(['author', 'currentVersion', 'numComments']);
   }
 
   /**
@@ -43,7 +43,7 @@ class FreetCollection {
    * @return {Promise<HydratedDocument<Freet>> | Promise<null> } - The freet with the given freetId, if any
    */
   static async findOne(freetId: Types.ObjectId | string): Promise<HydratedDocument<Freet>> {
-    return await FreetModel.findOne({_id: freetId}).populate('author').populate('currentVersion');
+    return await FreetModel.findOne({_id: freetId}).populate(['author', 'currentVersion', 'numComments']);
   }
 
   /**
@@ -53,7 +53,7 @@ class FreetCollection {
    */
   static async findAll(): Promise<Array<HydratedDocument<Freet>>> {
     // Retrieves freets and sorts them from most to least recent
-    return FreetModel.find({}).sort({dateModified: -1}).populate('author').populate('currentVersion');
+    return FreetModel.find({}).sort({dateModified: -1}).populate(['author', 'currentVersion', 'numComments']);
   }
 
   /**
@@ -64,7 +64,7 @@ class FreetCollection {
    */
   static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Freet>>> {
     const author = await UserCollection.findOneByUsername(username);
-    return FreetModel.find({author: author._id}).sort({dateModified: -1}).populate('author');
+    return FreetModel.find({author: author._id}).sort({dateModified: -1}).populate(['author', 'currentVersion', 'numComments']);
   }
 
   /**
@@ -83,7 +83,7 @@ class FreetCollection {
     freet.currentVersion = newVersion._id;
 
     await freet.save();
-    return (await freet.populate('author')).populate('currentVersion');
+    return await freet.populate(['author', 'currentVersion', 'numComments']);
   }
 
     /**
@@ -96,7 +96,7 @@ class FreetCollection {
       const freet = await FreetModel.findOne({_id: freetId});
       freet.visible = !freet.visible;
       await freet.save();
-      return (await freet.populate('author')).populate('currentVersion');
+      return await freet.populate(['author', 'currentVersion', 'numComments']);
     }
 
   /**

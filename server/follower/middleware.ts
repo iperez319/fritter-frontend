@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type {Request, Response, NextFunction} from 'express';
 import {Types} from 'mongoose';
 import FollowerCollection from '../follower/collection';
@@ -23,7 +24,8 @@ const doUsersExist = async (req: Request, res: Response, next: NextFunction) => 
  * Checks if users exists
  */
 const doesFollowAlreadyExist = async (req: Request, res: Response, next: NextFunction) => {
-  const {followerId, followeeId} = req.params;
+  const followerId = req.params.followerId || req.session.userId;
+  const followeeId = Types.ObjectId.isValid(req.params.followeeId) ? req.params.followeeId : req.params.mapping[req.params.followeeId as string];
 
   const state = await FollowerCollection.doesFollow(followerId, followeeId);
 

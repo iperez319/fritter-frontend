@@ -1,4 +1,6 @@
+// @ts-nocheck
 import type {Request, Response, NextFunction} from 'express';
+import { Types } from 'mongoose';
 import UserCollection from '../user/collection';
 
 /**
@@ -146,17 +148,32 @@ const isAuthorExists = async (req: Request, res: Response, next: NextFunction) =
 
 const doUsersExist = (fields: string[], reqType: 'body' | 'query' | 'params') => async (req: Request, res: Response, next: NextFunction) => {
   const args = req[reqType];
+  const mapping = {};
   for (const field of fields) {
     const currentField: string = args[field];
-    const user = await UserCollection.findOneByUserId(currentField);
-    if (user === null) {
-      res.status(404).json({
-        error: `User with id ${currentField} does not exist`
-      });
-      return;
+    if(!Types.ObjectId.isValid(currentField)){
+      // Assume username was passed
+      const user = await UserCollection.findOneByUsername(currentField)
+      if(user === null){
+        res.status(404).json({
+          error: `User with username ${currentField} does not exist`
+        })
+        return;
+      }
+      mapping[user.username] = user._id.toString();
+    } else {
+      const user = await UserCollection.findOneByUserId(currentField);
+      if (user === null) {
+        res.status(404).json({
+          error: `User with id ${currentField} does not exist`
+        });
+        return;
+      }
+      mapping[user.username] = user._id.toString();
     }
+    
   }
-
+  req.params.mapping = mapping;
   next();
 };
 

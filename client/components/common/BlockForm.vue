@@ -2,53 +2,54 @@
 <!-- This is just an example; feel free to define any reusable components you want! -->
 
 <template>
-  <form @submit.prevent="submit">
-    <h3>{{ title }}</h3>
-    <article
-      v-if="fields.length"
-    >
-      <div
-        v-for="field in fields"
-        :key="field.id"
-      >
-        <label :for="field.id">{{ field.label }}:</label>
-        <!-- <textarea
-          v-if="field.id === 'content'"
-          :name="field.id"
-          :value="field.value"
-          @input="field.value = $event.target.value"
-        /> -->
-        <TextEditor 
-          v-if="field.id === 'content'"
-          v-model="field.value"
-          ></TextEditor>
-        <input
-          v-else
-          :type="field.id === 'password' ? 'password' : 'text'"
-          :name="field.id"
-          :value="field.value"
-          @input="field.value = $event.target.value"
-        >
-      </div>
-    </article>
-    <article v-else>
-      <p>{{ content }}</p>
-    </article>
-    <button
-      type="submit"
-    >
-      {{ title }}
-    </button>
-    <section class="alerts">
+    <form @submit.prevent="submit">
+      <h3>{{ title }}</h3>
       <article
-        v-for="(status, alert, index) in alerts"
-        :key="index"
-        :class="status"
+        v-if="fields.length"
       >
-        <p>{{ alert }}</p>
+        <div
+          v-for="field in fields"
+          :key="field.id"
+        >
+          <label :for="field.id" v-if="field.label != 'Content'">{{ field.label }}:</label>
+          <!-- <textarea
+            v-if="field.id === 'content'"
+            :name="field.id"
+            :value="field.value"
+            @input="field.value = $event.target.value"
+          /> -->
+          <TextEditor
+            v-if="field.id === 'content'"
+            v-model="field.value"
+            ></TextEditor>
+          <input
+            v-else
+            :type="field.id === 'password' ? 'password' : 'text'"
+            :name="field.id"
+            :value="field.value"
+            @input="field.value = $event.target.value"
+          >
+        </div>
       </article>
-    </section>
-  </form>
+      <article v-else>
+        <p>{{ content }}</p>
+      </article>
+      <b-button
+        variant="primary"
+        type="submit"
+      >
+        {{ title }}
+      </b-button>
+      <section class="alerts">
+        <article
+          v-for="(status, alert, index) in alerts"
+          :key="index"
+          :class="status"
+        >
+          <p>{{ alert }}</p>
+        </article>
+      </section>
+    </form>
 </template>
 
 <script>
@@ -125,13 +126,14 @@ export default {
 
 <style scoped>
 form {
-  border: 1px solid #111;
+  border: 1px solid rgb(99, 99, 99);
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 14px;
   position: relative;
+  border-radius: 5px;
 }
 
 article > div {

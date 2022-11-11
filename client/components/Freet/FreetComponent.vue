@@ -2,121 +2,38 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
-  <!-- <article
-    class="freet"
-  >
-    <header>
-      <h3 class="author">
-        @{{ freet.author }}
-        <b-badge 
-          :to="'/version/' + freet._id" 
-          variant="info"
-          v-if="freet.previousVersions.length > 0"
-          >
-          Edited
-        </b-badge>
-        <b-badge 
-          variant="warning"
-          v-if="!freet.visible"
-          >
-          Archived
-        </b-badge>
-      </h3>
-      <div
-        class="actions"
-      >
-        <button
-          v-if="editing"
-          @click="submitEdit"
-        >
-          ✅ Save changes
-        </button>
-        <button
-          v-if="editing"
-          @click="stopEditing"
-        >
-          🚫 Discard changes
-        </button>
-        <button
-          v-if="$store.state.username === freet.author && !editing && editable"
-          @click="startEditing"
-        >
-          ✏️ Edit
-        </button>
-        <button 
-          @click="deleteFreet"
-          v-if="$store.state.username === freet.author"
-        >
-          🗑️ Delete
-        </button>
-        <button 
-          @click="archiveFreet"
-          v-if="$store.state.username === freet.author"
-        >
-          <b-icon-exclamation-triangle-fill></b-icon-exclamation-triangle-fill>
-          Archive
-        </button>
-        <button 
-          @click="reportFreet"
-          v-if="$store.state.username !== freet.author"
-        >
-          <b-icon-archive-fill/>
-          Report
-        </button>
-      </div>
-    </header>
-    <TextEditor
-      v-if="editing"
-      v-model="draft"
-    />
-    <div
-      v-else
-      class="content"
-      v-html="freet.content"
-    >
-  </div>
-    <p class="info">
-      Posted at {{ freet.dateModified }}
-      <i v-if="freet.edited">(edited)</i>
-    </p>
-    <section class="alerts">
-      <article
-        v-for="(status, alert, index) in alerts"
-        :key="index"
-        :class="status"
-      >
-        <p>{{ alert }}</p>
-      </article>
-    </section>
-  </article> -->
   <b-card header-tag="header" footer-tag="footer" @click="handleFreetClick" style="cursor:pointer">
       <template #header>
         <div class="header">
           <div class="left">
-            <b-avatar :text="freet.author[0]"></b-avatar>
+            <b-avatar :text="freet.author.username[0]"></b-avatar>
             <h5 class="mb-0">
-              @{{freet.author}}
-              <b-badge 
-                :to="'/version/' + freet._id" 
-                variant="info"
-                v-if="freet.previousVersions.length > 0"
-                >
-                Edited
-              </b-badge>
-              <b-badge 
-                variant="warning"
-                v-if="!freet.visible && editable"
-                >
-                Archived
-              </b-badge>
+              <b-link :to="'/profile/' + freet.author.username" style="color:black">@{{freet.author.username}}</b-link>
             </h5>
+            <div>
+                <b-badge
+                  :to="'/version/' + freet._id"
+                  variant="info"
+                  style="font-size:17px"
+                  v-if="freet.previousVersions.length > 0"
+                  >
+                  Edited
+                </b-badge>
+                <b-badge
+                  variant="warning"
+                  style="font-size:17px"
+                  v-if="!freet.visible && editable"
+                  >
+                  Archived
+                </b-badge>
+              </div>
           </div>
           <b-dropdown dropleft size="lg"  variant="link" toggle-class="text-decoration-none" no-caret v-if="!hideActions">
             <template #button-content>
               <b-icon-three-dots/>
             </template>
             <b-dropdown-item
-              v-if="$store.state.username === freet.author && !editing && editable"
+              v-if="$store.state.username === freet.author.username && !editing && editable"
               @click="startEditing"
             >
               <template #default>
@@ -127,7 +44,7 @@
             </b-dropdown-item>
             <b-dropdown-item 
               @click="deleteFreet"
-              v-if="$store.state.username === freet.author"
+              v-if="$store.state.username === freet.author.username"
             >
               <template #default>
                 <div class="menuItemWithIcon">
@@ -137,7 +54,7 @@
             </b-dropdown-item>
             <b-dropdown-item 
               @click="archiveFreet"
-              v-if="$store.state.username === freet.author"
+              v-if="$store.state.username === freet.author.username"
             >
               <template #default>
                 <div class="menuItemWithIcon">
@@ -148,7 +65,7 @@
             </b-dropdown-item>
             <b-dropdown-item 
               @click="reportFreet"
-              v-if="$store.state.username !== freet.author"
+              v-if="$store.state.username !== freet.author.username"
             >
               <template #default>
                 <div class="menuItemWithIcon">
@@ -164,24 +81,32 @@
         <div
         class="actions"
         >
-          <button
+          <b-button
             v-if="editing"
             @click="submitEdit"
+            variant="success"
           >
-            ✅ Save changes
-          </button>
-          <button
+          <b-icon-check-square-fill/> Save changes
+          </b-button>
+          <b-button
             v-if="editing"
             @click="stopEditing"
+            variant="danger"
           >
-            🚫 Discard changes
-          </button>
+          <b-icon-x-circle-fill/>
+            Discard changes
+          </b-button>
         </div>
         <TextEditor
           v-if="editing"
           v-model="draft"
         />
-        <span v-else v-html="freet.content" />
+        <div v-else>
+          <p class="timestamp">
+            <b-icon-clock/>{{this.postTimestamp}}
+          </p>
+          <p v-html="freet.content"></p>
+        </div>
       </b-card-text>
       <template #footer v-if="!hideActions && !hideFooter">
         <!-- <b-button variant="link" class="text-decoration-none"
@@ -190,7 +115,7 @@
           <b-icon-heart-fill/> Like
         </b-button> -->
         <b-button variant="link" class="text-decoration-none">
-          <b-icon-chat-fill/> Comment
+          <b-icon-chat-fill/> {{freet.numComments ?? 0}}
         </b-button>
       </template>
   </b-card>
@@ -198,6 +123,7 @@
 
 <script>
 import TextEditor from '../common/TextEditor';
+import moment from '../../../node_modules/moment';
 export default {
   name: 'FreetComponent',
   components: {
@@ -225,29 +151,37 @@ export default {
   data() {
     return {
       editing: false, // Whether or not this freet is in edit mode
-      draft: this.freet.content, // Potentially-new content for this freet
+      draft: this?.freet?.content ?? '', // Potentially-new content for this freet
       alerts: {} // Displays success/error messages encountered during freet modification
     };
   },
+  computed: {
+    postTimestamp() {
+      return moment(this?.freet?.dateModified).fromNow()
+    }
+  },
   methods: {
-    startEditing() {
+    startEditing(evt) {
       /**
        * Enables edit mode on this freet.
        */
+      evt.stopPropagation();
       this.editing = true; // Keeps track of if a freet is being edited
       this.draft = this.freet.content; // The content of our current "draft" while being edited
     },
-    stopEditing() {
+    stopEditing(evt) {
       /**
        * Disables edit mode on this freet.
        */
+      evt.stopPropagation();
       this.editing = false;
       this.draft = this.freet.content;
     },
-    deleteFreet() {
+    deleteFreet(evt) {
       /**
        * Deletes this freet.
        */
+      evt.stopPropagation();
       const params = {
         method: 'DELETE',
         callback: () => {
@@ -258,10 +192,11 @@ export default {
       };
       this.request(params);
     },
-    submitEdit() {
+    submitEdit(evt) {
       /**
        * Updates freet to have the submitted draft content.
        */
+      evt.stopPropagation();
       if (this.freet.content === this.draft) {
         const error = 'Error: Edited freet content should be different than current freet content.';
         this.$set(this.alerts, error, 'error'); // Set an alert to be the error text, timeout of 3000 ms
@@ -310,7 +245,8 @@ export default {
         setTimeout(() => this.$delete(this.alerts, e), 3000);
       }
     },
-    async archiveFreet() {
+    async archiveFreet(evt) {
+      evt.stopPropagation();
       const archive_url = `/api/freets/${this.freet._id}/archive`
       try {
         const r = await fetch(archive_url, {method: 'PUT'})
@@ -321,7 +257,8 @@ export default {
       }
       
     },
-    async reportFreet() {
+    async reportFreet(evt) {
+      evt.stopPropagation();
       const report_url = '/api/reports'
       try {
         const r = await fetch(report_url, {method: 'POST', body: JSON.stringify({parent: this.freet._id, parentType: 'Freet'}), headers: {'Content-Type': 'application/json'}});
@@ -330,7 +267,7 @@ export default {
       }
     },
     async handleFreetClick(evt) {
-        this.$router.push(`/freets/${this.freet._id}`)
+        if(!this.editing) this.$router.push(`/freets/${this.freet._id}`)
     },
     async handleLike(evt){
       evt.stopPropagation();
@@ -361,5 +298,20 @@ export default {
   display:flex;
   align-items:center;
   gap:10px
+}
+
+.timestamp {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: rgb(109, 109, 109);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.actions {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
 }
 </style>

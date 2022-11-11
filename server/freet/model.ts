@@ -29,6 +29,11 @@ export type PopulatedFreet = {
   visible: boolean;
 };
 
+const opts = {
+  toObject: { virtuals: true, versionKey: false },
+  toJSON: { virtuals: true, versionKey: false }
+};
+
 // Mongoose schema definition for interfacing with a MongoDB table
 // Freets stored in this table will have these fields, with the
 // type given by the type property, inside MongoDB
@@ -62,7 +67,16 @@ const FreetSchema = new Schema<Freet>({
     type: Boolean,
     default: true,
   }
-});
+}, opts);
+
+FreetSchema.virtual('numComments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'parent',
+  count: true,
+  match: {parentType: 'Freet'}
+})
+
 
 const FreetModel = model<Freet>('Freet', FreetSchema);
 export default FreetModel;

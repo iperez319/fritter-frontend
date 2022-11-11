@@ -2,14 +2,16 @@
 
 <template>
     <main>
-      <h2>Latest Freet</h2>
-        <FreetComponent :freet="versions[0]" :editable="false"/>
-      <h2>Version History</h2>
-      <section v-if="versions">
-        <FreetComponent v-for="(version, index) in versions" v-if="index > 0" :freet="version" :editable="false" hideActions/>
+      <h2 style="margin-top: 10px; margin-bottom:10px">Latest Freet</h2>
+      <FreetComponent :freet="versions[0]" :editable="false"/>
+      <section v-if="(versions.length ?? 0) > 0">
+        <h2 style="margin-top: 10px; margin-bottom:10px">Version History</h2>
+        <section class="freetList">
+          <FreetComponent v-for="(version, index) in versions" v-if="index > 0" :freet="version" :editable="false" hideActions/>
+        </section>
       </section>
     </main>
-  </template>
+</template>
   
   <script>
   import FreetComponent from '@/components/Freet/FreetComponent.vue';
@@ -34,7 +36,9 @@
           const author_response = await author_request.json();
           author = author_response.username;
         }
-        this.versions = version_response.map(item => ({...item, author, dateModified: item.dateCreated, edited: false, previousVersions: []}))
+        console.log(version_response);
+        this.versions = version_response.map(item => ({...item, author: {username: author}, dateModified: item.dateCreated, edited: false, previousVersions: [], _id: item.parent._id}))
+        console.log(this.versions)
       } catch (err) {
         console.error(err)
       }
@@ -62,6 +66,11 @@
     flex: 1 0 50vh;
     padding: 3%;
     overflow-y: scroll;
+  }
+
+  .freetList {
+    display: flex;
+    gap: 10px;
   }
   </style>
   

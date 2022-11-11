@@ -8,7 +8,10 @@ import type {Version} from '../version/model';
 // Update this if you add a property to the Freet type!
 type CommentResponse = {
   _id: string;
-  author: string;
+  author: {
+    username: string,
+    _id: string,
+  };
   dateCreated: string;
   dateModified: string;
   parent: string;
@@ -38,15 +41,15 @@ const constructCommentResponse = (comment: HydratedDocument<PopulatedComment>): 
     })
   };
 
-  const {username} = commentCopy.author;
-  delete commentCopy.author;
-
   return {
     ...commentCopy,
     _id: commentCopy._id.toString(),
-    author: username,
-    dateCreated: formatDate(comment.dateCreated),
-    dateModified: formatDate(comment.dateModified),
+    author: {
+      username: commentCopy.author.username,
+      _id: commentCopy._id.toString()
+    },
+    dateCreated: comment.dateCreated.toString(),
+    dateModified: comment.dateModified.toString(),
     parent: commentCopy.parent.toString(),
     content: commentCopy.currentVersion.content,
   };
